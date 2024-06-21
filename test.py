@@ -34,8 +34,8 @@ stage_count=0
 
 for batch in test_ds:
     images, labels = batch
-    if(stage_count>4): break
-    for i in range (8):
+    #if(stage_count>4): break
+    for i in range (len(labels)):
 
         index = i 
         image, label = images[index], labels[index]
@@ -45,7 +45,7 @@ for batch in test_ds:
         image1 = image.unsqueeze(0)
         output = net(image1)
         _, predicted = torch.max(output, 1)
-        imshow(image, label, predicted.item())
+        #imshow(image, label, predicted.item())
         if label==predicted.item(): true_count+=1
         else: false_count+=1
         # print(f'Predicted: {classes[predicted.item()]}')
