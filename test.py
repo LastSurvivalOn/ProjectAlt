@@ -5,6 +5,8 @@ from torch import optim
 import torch
 import torchvision
 import matplotlib.pyplot as plt
+import numpy as np
+import torchvision.transforms as transforms
 
 PATH = './trained_data.pth'
 net = classificator_ALT.ALT_CLASSIFICATOR()
@@ -13,61 +15,40 @@ net.load_state_dict(torch.load(PATH))
 
 classes = ['(NOT ALT)', '(ALT)'] 
 
-# dataiter = iter(test_ds)
-# images, labels = dataiter.next()
-# # print images
-# plt.imshow(torchvision.utils.make_grid(images))
-# print('GroundTruth: ', ' '.join(f'{classes[labels[j]]:5s}' for j in range(4)))
 
 
-
-# # Perform inference and print predictions
-# outputs = net(images)
-# _, predicted = torch.max(outputs, 1)
-
-# print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}' for j in range(4)))
-
-# correct = 0
-# total = 0
-# # since we're not training, we don't need to calculate the gradients for our outputs
-# with torch.no_grad():
-#     for data in test_ds:
-#         images, labels = data
-#         # calculate outputs by running images through the network
-#         outputs = net(images)
-#         # the class with the highest energy is what we choose as prediction
-#         _, predicted = torch.max(outputs.data, 1)
-#         total += labels.size(0)
-#         correct += (predicted == labels).sum().item()
-
-# print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
-
-import numpy as np
-# Get one batch from the DataLoader
-images, labels = next(iter(test_ds))
-
-
-
-# Define a function to show the image
-def imshow(img):
-    img = img / 2 + 0.5  # unnormalize
+def imshow(img, truel, predl):
     npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
+    # Transpose from (C, H, W) to (H, W, C) for displaying
+    npimg = np.transpose(npimg, (1, 2, 0))
+    # plt.imshow(npimg)
+    # npimg = img.numpy()
+    # img=transforms.ToPILImage(npimg)
+    plt.imshow(npimg)
+    plt.title(f"True label - {classes[truel]}, Predicted - {classes[predl]}")
     plt.show()
 
-for i in range (32):
-    
-        # Select a single image and its label
-    index = i  # Change this index to select a different image
-    image, label = images[index], labels[index]
-    # Print the selected image and its label
-    imshow(image)
-    print(f'GroundTruth: {classes[label]}')
+true_count=0
+false_count=0
+stage_count=0
 
-    # Perform inference for the selected image
-    image = image.unsqueeze(0)  # Add batch dimension since the model expects batches
-    output = net(image)
-    _, predicted = torch.max(output, 1)
+for batch in test_ds:
+    images, labels = batch
+    if(stage_count>4): break
+    for i in range (8):
 
-    # Print the predicted label
-    print(f'Predicted: {classes[predicted.item()]}')
+        index = i 
+        image, label = images[index], labels[index]
+        
+        # print(f'GroundTruth: {classes[label]}')
+
+        image1 = image.unsqueeze(0)
+        output = net(image1)
+        _, predicted = torch.max(output, 1)
+        imshow(image, label, predicted.item())
+        if label==predicted.item(): true_count+=1
+        else: false_count+=1
+        # print(f'Predicted: {classes[predicted.item()]}')
+    stage_count+=1
+    print(f"EPOCH {stage_count}\n\tAccuracy: {true_count/(true_count+false_count)}")
+print(f"Final Accuracy is {true_count/(true_count+false_count)} from {true_count+false_count} images")

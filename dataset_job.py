@@ -20,7 +20,7 @@ class IMAGE_DS(Dataset):
         return self.len
 
     def __getitem__(self, idx):
-        return self.transform(self.images[idx]), self.labels[idx]
+        return self.transform(self.transformed_images[idx]), self.labels[idx]
     
     def view_image(self, idx):
         plt.imshow(self.images[idx])
@@ -30,17 +30,17 @@ class IMAGE_DS(Dataset):
     def get_image(self, idx):
         return self.images[idx]
     
-    def train_test_split(self, train_size=0.9):
+    def train_test_split(self, train_size=0.75):
         train_ds, test_ds = random_split(self, [int(train_size*self.len), self.len-int(train_size*self.len)])
         return train_ds, test_ds
     
-    def loader(self, batch_size=32):
+    def loader(self, batch_size=8):
         train_ds, test_ds = self.train_test_split()
         return DataLoader(train_ds, batch_size=batch_size, shuffle=True), DataLoader(test_ds, batch_size=batch_size, shuffle=False)
     
     
-ds=IMAGE_DS('dataset.h5')
+ds=IMAGE_DS('altgirls.h5')
 train_ds, test_ds = ds.loader()
-#print(len(train_ds), len(test_ds), ds[0][0].shape)
+# print(len(train_ds), len(test_ds), ds[0][0].shape)
 # ds.view_image(599)
     

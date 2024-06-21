@@ -20,6 +20,7 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         outputs = model(images)
         labels = labels.view(-1)
+        #outputs=outputs.view(-1)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()

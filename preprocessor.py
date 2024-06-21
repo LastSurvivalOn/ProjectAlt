@@ -83,4 +83,4 @@ class Preprocessor:
 preprocessor=Preprocessor(folder_name="data\\ManualHandling\\false", new_folder_name="resized_images\\false")
 # preprocessor.full_cycle()
 # preprocessor.rename_images('false_images')
-preprocessor.create_bin_dataset(true_folder="resized_images\\true", false_folder="resized_images\\false")
+preprocessor.create_bin_dataset(true_folder="resized_images\\true", false_folder="resized_images\\false", dataset_name="altgirls")
